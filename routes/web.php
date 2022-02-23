@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\PusherController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,3 +26,4 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::resource('groups', GroupController::class);
 Route::resource('conversations', ConversationController::class);
+Route::post('/pusher/auth', [PusherController::class, 'pusherAuth'])->middleware('auth');

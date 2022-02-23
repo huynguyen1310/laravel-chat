@@ -13,7 +13,9 @@ use Illuminate\Queue\SerializesModels;
 
 class NewMessage implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     /**
      * @var Conversation
@@ -23,7 +25,7 @@ class NewMessage implements ShouldBroadcast
     /**
      * Create a new event instance.
      *
-     * @return void
+     * @param  Conversation  $conversation
      */
     public function __construct(Conversation $conversation)
     {

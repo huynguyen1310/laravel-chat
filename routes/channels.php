@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Group;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
