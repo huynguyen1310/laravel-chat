@@ -7,6 +7,19 @@
       </a>
     </p>
     <div class="collapse" :id="'collapseOne-' + group.id">
+      <div class="card card-header">
+        <form>
+          <div class="form-group" style="margin-top: 10px">
+            <select v-model="addUsers" multiple id="friends" style="width: 100%">
+              <option v-for="user in userAbleToAdd " :value="user.id">
+                {{ user.name }}
+              </option>
+            </select>
+          </div>
+        </form>
+        <button type="submit" class="btn btn-primary" @click.prevent="addUser">Add To Group</button>
+      </div>
+
       <div class="card card-body">
         <ul class="chat">
           <li v-for="conversation in conversations">
@@ -48,7 +61,9 @@ export default {
       message: '',
       user: '',
       typing: false,
-      group_id: this.group.id
+      group_id: this.group.id,
+      addUsers: [],
+      userAbleToAdd: []
     }
   },
   created() {
@@ -66,6 +81,7 @@ export default {
   },
   mounted() {
     this.listenForNewMessage();
+    this.getUsers();
   },
   methods: {
     store() {
@@ -91,6 +107,18 @@ export default {
         });
       }, 300);
     },
+    getUsers() {
+      axios.get('users/add-group/' + this.group.id).then((response) => {
+        this.userAbleToAdd = JSON.parse(JSON.stringify(response.data));
+      })
+    },
+    addUser() {
+      axios.post(`/groups/${this.group.id}/add-user`, {name: this.name, users: this.addUsers})
+          .then((response) => {
+            this.addUsers = [];
+            Bus.$emit('addUserToGroup', response.data);
+          });
+    }
   }
 }
 </script>

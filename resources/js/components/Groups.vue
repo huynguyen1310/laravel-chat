@@ -17,6 +17,11 @@ export default {
     Bus.$on('groupCreated', (group) => {
       this.groups.push(group);
     });
+
+    Bus.$on('addUserToGroup', group => {
+      console.log(this.user.groups);
+      // this.groups.filter(x => x.id === this.user.groups)
+    })
     this.listenForNewGroups();
   },
   methods: {
@@ -25,6 +30,11 @@ export default {
           .listen('GroupCreated', (e) => {
             this.groups.push(e.group);
           });
+    },
+    listenForAddUserToGroup() {
+      Echo.private('users.' + this.user.id).listen('AddUserToGroup', e => {
+        this.groups.push(e.group)
+      })
     }
   }
 }

@@ -11,13 +11,16 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class GroupCreated implements ShouldBroadcast
+class AddUserToGroup implements ShouldBroadcast
 {
     use Dispatchable;
     use InteractsWithSockets;
     use SerializesModels;
 
-    public $group;
+    /**
+     * @var Group
+     */
+    public Group $group;
 
     /**
      * Create a new event instance.
@@ -32,7 +35,7 @@ class GroupCreated implements ShouldBroadcast
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return Channel|array
+     * @return \Illuminate\Broadcasting\Channel|array
      */
     public function broadcastOn()
     {

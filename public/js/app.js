@@ -5465,6 +5465,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['group'],
   data: function data() {
@@ -5473,7 +5486,9 @@ __webpack_require__.r(__webpack_exports__);
       message: '',
       user: '',
       typing: false,
-      group_id: this.group.id
+      group_id: this.group.id,
+      addUsers: [],
+      userAbleToAdd: []
     };
   },
   created: function created() {
@@ -5492,6 +5507,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.listenForNewMessage();
+    this.getUsers();
   },
   methods: {
     store: function store() {
@@ -5521,6 +5537,24 @@ __webpack_require__.r(__webpack_exports__);
           typing: true
         });
       }, 300);
+    },
+    getUsers: function getUsers() {
+      var _this5 = this;
+
+      axios.get('users/add-group/' + this.group.id).then(function (response) {
+        _this5.userAbleToAdd = JSON.parse(JSON.stringify(response.data));
+      });
+    },
+    addUser: function addUser() {
+      var _this6 = this;
+
+      axios.post("/groups/".concat(this.group.id, "/add-user"), {
+        name: this.name,
+        users: this.addUsers
+      }).then(function (response) {
+        _this6.addUsers = [];
+        Bus.$emit('addUserToGroup', response.data);
+      });
     }
   }
 });
@@ -5558,6 +5592,9 @@ __webpack_require__.r(__webpack_exports__);
     Bus.$on('groupCreated', function (group) {
       _this.groups.push(group);
     });
+    Bus.$on('addUserToGroup', function (group) {
+      console.log(_this.user.groups); // this.groups.filter(x => x.id === this.user.groups)
+    });
     this.listenForNewGroups();
   },
   methods: {
@@ -5566,6 +5603,13 @@ __webpack_require__.r(__webpack_exports__);
 
       Echo["private"]('users.' + this.user.id).listen('GroupCreated', function (e) {
         _this2.groups.push(e.group);
+      });
+    },
+    listenForAddUserToGroup: function listenForAddUserToGroup() {
+      var _this3 = this;
+
+      Echo["private"]('users.' + this.user.id).listen('AddUserToGroup', function (e) {
+        _this3.groups.push(e.group);
       });
     }
   }
@@ -5656,8 +5700,7 @@ window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
       'X-CSRF-TOKEN': '{{ csrf_token() }}'
     }
   }
-});
-window.Pusher.logToConsole = true;
+}); // window.Pusher.logToConsole = true
 
 /***/ }),
 
@@ -34632,6 +34675,75 @@ var render = function () {
       "div",
       { staticClass: "collapse", attrs: { id: "collapseOne-" + _vm.group.id } },
       [
+        _c("div", { staticClass: "card card-header" }, [
+          _c("form", [
+            _c(
+              "div",
+              {
+                staticClass: "form-group",
+                staticStyle: { "margin-top": "10px" },
+              },
+              [
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.addUsers,
+                        expression: "addUsers",
+                      },
+                    ],
+                    staticStyle: { width: "100%" },
+                    attrs: { multiple: "", id: "friends" },
+                    on: {
+                      change: function ($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function (o) {
+                            return o.selected
+                          })
+                          .map(function (o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.addUsers = $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      },
+                    },
+                  },
+                  _vm._l(_vm.userAbleToAdd, function (user) {
+                    return _c("option", { domProps: { value: user.id } }, [
+                      _vm._v(
+                        "\n              " +
+                          _vm._s(user.name) +
+                          "\n            "
+                      ),
+                    ])
+                  }),
+                  0
+                ),
+              ]
+            ),
+          ]),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-primary",
+              attrs: { type: "submit" },
+              on: {
+                click: function ($event) {
+                  $event.preventDefault()
+                  return _vm.addUser.apply(null, arguments)
+                },
+              },
+            },
+            [_vm._v("Add To Group")]
+          ),
+        ]),
+        _vm._v(" "),
         _c("div", { staticClass: "card card-body" }, [
           _c(
             "ul",

@@ -36,4 +36,4 @@ window.Echo = new Echo({
         }
     }
 });
-window.Pusher.logToConsole = true
+// window.Pusher.logToConsole = true

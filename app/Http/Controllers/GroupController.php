@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AddUserToGroup;
 use App\Events\GroupCreated;
 use App\Models\Group;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class GroupController extends Controller
@@ -19,6 +21,15 @@ class GroupController extends Controller
 
         broadcast(new GroupCreated($group))->toOthers();
 
+        return $group;
+    }
+
+    public function addUserToGroup(Group $group)
+    {
+        $users = collect(request('users'));
+        $group->users()->attach($users);
+
+        broadcast(new addUserToGroup($group))->toOthers();
         return $group;
     }
 }
