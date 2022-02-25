@@ -116,6 +116,7 @@ export default {
       axios.post(`/groups/${this.group.id}/add-user`, {name: this.name, users: this.addUsers})
           .then((response) => {
             this.addUsers = [];
+            this.userAbleToAdd = this.getUsers();
             Bus.$emit('addUserToGroup', response.data);
           });
     }

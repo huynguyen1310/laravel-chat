@@ -5553,6 +5553,7 @@ __webpack_require__.r(__webpack_exports__);
         users: this.addUsers
       }).then(function (response) {
         _this6.addUsers = [];
+        _this6.userAbleToAdd = _this6.getUsers();
         Bus.$emit('addUserToGroup', response.data);
       });
     }
@@ -5593,9 +5594,22 @@ __webpack_require__.r(__webpack_exports__);
       _this.groups.push(group);
     });
     Bus.$on('addUserToGroup', function (group) {
-      console.log(_this.user.groups); // this.groups.filter(x => x.id === this.user.groups)
+      var userGroupIds = _this.user.groups.map(function (group) {
+        return group.id;
+      });
+
+      if (!_this.user.groups.map(function (group) {
+        return group.id;
+      }).some(function (id) {
+        return id === group.id;
+      })) {
+        console.log('event add user');
+
+        _this.groups.push(group);
+      }
     });
     this.listenForNewGroups();
+    this.listenForAddUserToGroup();
   },
   methods: {
     listenForNewGroups: function listenForNewGroups() {

@@ -19,10 +19,14 @@ export default {
     });
 
     Bus.$on('addUserToGroup', group => {
-      console.log(this.user.groups);
-      // this.groups.filter(x => x.id === this.user.groups)
+      let userGroupIds = this.user.groups.map(group => group.id);
+      if (!this.user.groups.map(group => group.id).some(id => id === group.id)) {
+        console.log('event add user')
+        this.groups.push(group);
+      }
     })
     this.listenForNewGroups();
+    this.listenForAddUserToGroup();
   },
   methods: {
     listenForNewGroups() {
@@ -32,9 +36,10 @@ export default {
           });
     },
     listenForAddUserToGroup() {
-      Echo.private('users.' + this.user.id).listen('AddUserToGroup', e => {
-        this.groups.push(e.group)
-      })
+      Echo.private('users.' + this.user.id)
+          .listen('AddUserToGroup', e => {
+            this.groups.push(e.group)
+          })
     }
   }
 }
